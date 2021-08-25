@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#define MAX 10000
+
+typedef struct arv{
+    int info;
+    struct arv*esq;
+    struct arv*dir;
+}TArv;
+typedef TArv *PArv;
+
+void inicializa_arvore(PArv arvore){ //Função que inicializa a árvore
+    arvore=NULL;
+}
+
+PArv insereABB (PArv a, int c){     //Função que insere um valor na ABB
+    if (a == NULL) {  //Função utilizada na última atividade de AED 1 com a Prof Daniela Musa
+        PArv novo=(PArv)malloc(sizeof(TArv));
+        novo->esq = NULL;
+        novo->dir = NULL;
+        novo->info = c;
+        a = novo;
+    }
+
+    else if (c < a->info)
+        a->esq = insereABB(a->esq,c);
+    else if (c > a->info)  //Eis a diferença, pois não queremos valores repetidos na ABB
+        a->dir = insereABB(a->dir,c);
+    else{
+        return(a);
+    }
+}
+
+PArv buscaABB(PArv a, int c){ //Função recursiva que busca um nó de acordo com o dado dele na ABB
+    if (a==NULL)            //Função utilizada na última atividade de AED 1 com a Prof Daniela Musa
+        return NULL;        
+    
+    else if(c < a->info)
+        return(buscaABB(a->esq,c));
+    
+    else if (c > a->info)
+        return(buscaABB(a->dir,c));
+    
+    else
+        return a;
+    
+}
+
+void imprimeIn(PArv a){ //Função que imprime a ABB em ordem infixa
+    if(a!=NULL) {       //Função utilizada na penúltima atividade de AED 1 com a Prof Daniela Musa
+        imprimeIn(a->esq);
+        printf("%d ", a->info);
+        imprimeIn(a->dir);
+    }
+}
+
+void busca_vetor(int vetor[], int n, int tam){
+    int i;
+    for(i=0; i<tam; i++){
+        if(vetor[i]==n){
+            printf("Achou o %d!!", n);
+        }
+    }
+    printf("Não achou o %d!!", n);
+}
+
+void insercao(int vetor[], int n){ //Função do Prof. André Backes (prof da Ufu) com ordenação por inserção 
+    int i, j, aux;      //Link da aula: https://www.youtube.com/watch?v=79buQYoWszA&ab_channel=LinguagemCPrograma%C3%A7%C3%A3oDescomplicada
+    
+    for(i=1; i < n; i++){
+        aux = vetor[i];
+        for(j=i; (j>0) && (aux < vetor[j-1]); j--)
+            vetor[j]=vetor[j-1];
+        vetor[j]=aux;
+    }
+    return;
+}
+
+int main(){
+    PArv arvore_binaria1, arvore_binaria2;
+    int vet_ord[MAX], vet_rand[MAX], i;
+    srand(time(NULL));
+    
+    inicializa_arvore(arvore_binaria1);
+    inicializa_arvore(arvore_binaria2);
+    
+    for(i=0; i<MAX; i++){ //Gera os valores randômicos dentro de um range de 0 a 10000
+        vet_rand[i]= rand()%6000;
+        vet_ord[i]= vet_rand[i];
+    }
+
+    clock_t comeco1 = clock(); //Começa a contar o Insertion Sort
+    insercao(vet_ord, MAX);
+    clock_t fim1 = clock(); //Finalização da contagem do Insertion Sort 
+    
+    double tempo1 = ((double)(fim1 - comeco1))/ CLOCKS_PER_SEC; //Tempo calculado pelo delta tempo
+    printf("O algoritmo do Insertion Sort demorou %f segundos para ordenar o vetor randômico\n", tempo1);
+
+    /*for(i=0; i<MAX; i++)
+        printf("%d ", vet_ord[i]);
+    
+    printf("\n");
+    
+    for(i=0; i<MAX; i++)
+        printf("%d ", vet_rand[i]);
+    */
+    
+    clock_t comeco2 = clock(); //Começa a contar a insercao na ABB
+    for(i=0; i<MAX; i++){
+        arvore_binaria1 = insereABB(arvore_binaria1, vet_rand[i]);
+    }
+    clock_t fim2 = clock(); //Finalização da contagem da insercao na ABB 
+    
+    double tempo2 = ((double)(fim2 - comeco2))/ CLOCKS_PER_SEC; //Tempo calculado pelo delta tempo
+    printf("A inserção da ABB demorou %f segundos para inserir o vetor randômico\n", tempo2);
+    
+    //imprimeIn(arvore_binaria1);
+    
+    clock_t comeco3 = clock(); //Começa a contar a insercao na ABB
+    for(i=0; i<MAX; i++){
+        arvore_binaria2 = insereABB(arvore_binaria2, vet_ord[i]);
+    }
+    clock_t fim3 = clock(); //Finalização da contagem da insercao na ABB 
+    
+    double tempo3 = ((double)(fim3 - comeco3))/ CLOCKS_PER_SEC; //Tempo calculado pelo delta tempo
+    printf("A inserção da ABB demorou %f segundos para inserir o vetor ordenado\n", tempo3);
+    
+    //imprimeIn(arvore_binaria2);
+    
+    //Após analisar os tempos para vetores ordenados e randômicos, utilzaremos apenas a árvore binária 1
+    
+    
+    
+    return 0;
+}

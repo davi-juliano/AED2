@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX 10000
+
+//////////Funções utilizadas pelo professor André Backes em suas aulas 89-98 sobre Tabelas Hash
+
+//Definição do tipo Hash
+typedef struct hash{
+    int qtd, TABLE_SIZE;
+    int **num;
+}Hash;
+
+Hash* criaHash(int TABLE_SIZE){
+    Hash* ha = (Hash*) malloc(sizeof(Hash));
+    if(ha != NULL){
+        int i;
+        ha->TABLE_SIZE = TABLE_SIZE;
+        ha->num = (int**) malloc(TABLE_SIZE * sizeof(int*));
+        if(ha->num == NULL){
+            free(ha);
+            return NULL;
+        }
+        ha->qtd = 0;
+        for(i=0; i < ha->TABLE_SIZE; i++)
+            ha->num[i] = NULL;
+    }
+    return ha;
+}
+
+
+///Função de divisão
+int chaveDivisao(int chave, int TABLE_SIZE){
+    return (chave & 0x7FFFFFFF) % TABLE_SIZE; //De acordo com o professor, a operação de E Bit a Bit elimina 
+                                              //o sinal do valor da chave
+}
+
+/////Função de inserção e busca dos hash's sem colisão
+
+int insereHash_SemColisao(Hash* ha, int num){
+    if(ha == NULL || ha->qtd == ha->TABLE_SIZE)
+        return 0;
+
+    int pos = chaveDivisao(num,ha->TABLE_SIZE);
+    int* novo;
+    novo = (int*) malloc(sizeof(int));
+    if(novo == NULL)
+        return 0;
+    *novo = num;
+    ha->num[pos] = novo;
+    ha->qtd++;
+    return 1;
+}
+
+int buscaHash_SemColisao(Hash* ha, int busca ,int* num){
+    if(ha == NULL)
+        return 0;
+
+    int pos = chaveDivisao(busca, ha->TABLE_SIZE);
+    if(ha->num[pos] == NULL)
+        return 0;
+    *num = *(ha->num[pos]);
+    return 1;
+}
+
+//Função da sondagem linear para endereçamento aberto
+int sondagemLinear(int pos, int i, int TABLE_SIZE){
+    return ((pos + i) & 0x7FFFFFFF) % TABLE_SIZE;
+}
+
+int insereHash_EnderAberto(Hash* ha, int num){
+    if(ha == NULL || ha->qtd == ha->TABLE_SIZE)
+        return 0;
+    int i, pos, newPos;
+    pos = chaveDivisao(num,ha->TABLE_SIZE);
+    
+    for(i=0; i < ha->TABLE_SIZE; i++){
+        newPos = sondagemLinear(pos,i,ha->TABLE_SIZE);
+        if(ha->num[newPos] == NULL){
+            int* novo;
+            novo = (int*) malloc(sizeof(int));
+            if(novo == NULL)
+                return 0;
+            *novo = num;
+            ha->num[newPos] = novo;
+            ha->qtd++;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int buscaHash_EnderAberto(Hash* ha, int inserir, int* num){
+    if(ha == NULL)
+        return 0;
+
+    int i, pos, newPos;
+    pos = chaveDivisao(inserir,ha->TABLE_SIZE);
+    
+    for(i=0; i < ha->TABLE_SIZE; i++){
+        newPos = sondagemLinear(pos,i,ha->TABLE_SIZE);
+        if(ha->num[newPos] == NULL)
+            return 0;
+
+        if(ha->num[newPos] == inserir){
+            *num = *(ha->num[newPos]);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main(){
+    int tamanho = MAX, i, num;
+    Hash *tabela1 = criaHash(tamanho);
+    int vetaux[MAX];
+    srand(time(NULL));
+    
+    clock_t comeco1 = clock(); //Começa a contar a inserção na Tabela Hash
+    for(i=0; i<tamanho; i++){
+        vetaux[i]=rand()%10000;
+        if(insereHash_SemColisao(tabela1, vetaux[i])==1){
+            printf("Inserido com sucesso!");
+        }
+        else{
+            printf("Houve erro na insercao!");
+        }
+    }
+    clock_t fim1 = clock(); //Finalização da contagem da inserção na Tabela Hash
+
+    double tempo1 = ((double)(fim1 - comeco1))/ CLOCKS_PER_SEC; //Tempo calculado pelo delta tempo
+    printf("O algoritmo de insercao na Tabela Hash demorou %f segundos\n", tempo1);
+
+    clock_t comeco2 = clock();
+    if(buscaHash_SemColisao(tabela1, 999, &num)==1){
+        printf("O numero %d foi encontrado!!", num);
+    }
+    else{
+        printf("O numero não foi encontrado!");
+    }
+    clock_t fim2 = clock();
+
+    double tempo2 = ((double)(fim2 - comeco2))/ CLOCKS_PER_SEC; //Tempo calculado pelo delta tempo
+    printf("O algoritmo de busca na Tabela Hash demorou %f segundos\n", tempo2);
+
+    
+    
+    for(i=0; i<tamanho; i++){
+        if()
+    }
+
+    return 0;
+}

@@ -1,0 +1,10 @@
+1 - Teoricamente, o Countingsort é o algoritmo mais otimizado com relação ao tempo de execução(O(n)), entretanto, não é nem de perto o mais otimizado na área do uso de memória.
+O mais otimizado em memória e um otimizado suficientemente bem em tempo de execução é o Insertionsort (Tempo: O(n^2) para o pior caso e O(n) para o melhor).
+
+2 - Teoricamente, o Countingsort também é o mais otimizado para o tempo de execução (Para ser descendente, o vetor deve ser invertido), entretanto, o na área de uso de memória,
+temos que o Selectionsort é o otimizado na relação de memória e tem tempo de execução O(n^2).
+
+3- O Countingsort é o mais otimizado para o tempo de execução ao custo de memória, e como o Insertionsort é tido como o melhor para ordenar em ordem crescente, temos que ele é o melhor para
+memória e bom para o tempo de execução
+
+4- O melhor algoritmo estável é o Countingsort para o tempo de execução, entretanto para memória, é novamente o Insertion (Insertion é estável).

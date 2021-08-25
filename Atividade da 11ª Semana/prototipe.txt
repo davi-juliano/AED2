@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX 500
+
+int main(){
+    int n, m, i, j;
+    char mapa[5][MAX], charaux;
+    int dist[5][MAX];
+    
+    do{
+    
+    scanf("%d %d", &n, &m);
+    
+    for(i=0; i<5; i++){ // Zerar todos os valores
+        for(j=0; j < MAX; j++){
+            mapa[i][j]='0'; 
+        }
+    }
+    
+    for(i=0; i<n; i++){
+        scanf("%s", mapa[i]);
+    }
+/*    
+    printf("\n");
+
+    for(i=0; i<n; i++){
+        printf("\n%s", mapa[i]);
+    }
+*/
+
+
+    }while(n == 0 || m == 0);
+}

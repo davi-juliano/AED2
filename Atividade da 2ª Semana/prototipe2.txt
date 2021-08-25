@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX 10
+
+void insercao(int vetor[], int n){ //Função do Prof. André Backes (prof da Ufu) com ordenação por inserção 
+    int i, j, aux;      //Link da aula: https://www.youtube.com/watch?v=79buQYoWszA&ab_channel=LinguagemCPrograma%C3%A7%C3%A3oDescomplicada
+    
+    for(i=1; i < n; i++){
+        aux = vetor[i];
+        for(j=i; (j>0) && (aux < vetor[j-1]); j--)
+            vetor[j]=vetor[j-1];
+        vetor[j]=aux;
+    }
+    return;
+}
+
+int main(){
+    int num_livro[5], i=0, j=0, k=0, l=0, m=0, n=0, livro[5][MAX], aux;
+    char charaux;
+    
+    for(i=0; i < 5; i++){ // Zerar todos os valores
+        for(j=0; j < MAX; j++){
+            livro[i][j]=0; 
+        }
+    }
+    
+    for(i=0; i<5; i++){
+        j=0;
+        while(scanf("%d%c", &livro[i][j++], &charaux) == 2){ 
+            if(charaux == '\n') 
+                break;
+        }
+        
+        num_livro[i] = livro[i][0];
+        
+        livro[i][0]=0;
+        aux=livro[i][0]; // Troca de lugar para o numero de livros não ser ultrapassado
+        livro[i][0]=livro[i][num_livro[i]];
+        livro[i][num_livro[i]]=aux;
+        
+        insercao(livro[i], num_livro[i]);
+    }
+    
+    int pior_caso = 1; // Pior caso é a multiplicação dos valores dos números de livros (Pelo Brutal Force, Max num = n^5).
+    
+    for(i=0; i<5; i++){ //Multiplicador n^5
+        pior_caso = pior_caso*num_livro[i]; 
+    }
+    
+    int respostas1[100]; //Criar um vetor com o pior caso de livros
+    
+    for(i=0; i<100;i++){
+        respostas1[i]=0;
+    }
+    
+    /*for(i = 0 ; i < num_livro[0]; i++){	//Otimizar essa fita
+		for(j = 0 ; j < num_livro[1]; j++){	
+			for(k = 0 ; k < num_livro[2]; k++){	
+				for(l = 0 ; l < num_livro[3]; l++){	
+					for(m = 0 ; m < num_livro[4]; m++){	
+						respostas[n] = livro[0][i] + livro[1][j] + livro[2][k] + livro[3][l] + livro[4][m];
+                        n++;
+					}
+                }
+            }
+        }
+    }*/
+
+    //Visão: Pegar os valores de cada um dos valores 5 vezes, e depois ir comparando com as somas das linhas abaixo
+    //Não creio que vai ser otimizado, mas vai ser uma heurística boa
+
+    for(i=0; i<num_livro[0]; i++){
+        for(j=0; j<num_livro[1];j++){
+            respostas1[n] = livro[0][i] + livro[1][j];
+            n++;
+        }
+    }
+
+    insercao(respostas1, n);
+    int save_game1 = n;
+    int respostas2[100];
+    
+    for(i=0; i<100;i++){
+        respostas2[i]=0;
+    }
+    
+    n=0;
+    for(k=0;k<num_livro[2];k++){
+        for(l=0;l<num_livro[3];l++){
+            respostas2[n]= livro[2][k]+livro[3][l];
+        }
+    }
+
+    insercao(respostas2, n);
+    int save_game2 = n;
+    int respostas3[10000];
+    
+    n=0;
+    for(i=0; i<save_game1; i++){
+        for(j=0; j<save_game2;j++){
+            respostas3[n] = respostas1[i] + respostas2[j];
+            n++;
+        }
+    }
+    
+    insercao(respostas3, n);
+    int save_game3 = n;
+    int respostas4[100000];
+    
+    n=0;
+    for(i=0; i<save_game3; i++){
+        for(j=0; j<num_livro[4];j++){
+            respostas4[n] = respostas3[i] + livro[4][j];
+            n++;
+        }
+    }
+    
+    int num_somas;
+    int resposta = 0;
+    scanf("%d", &num_somas);
+    
+    j=n-1; //Ordenação é crescente, portanto faremos a busca de tras pra frente
+    i=0;
+    while(i < num_somas){
+        resposta = resposta + respostas4[j]; 
+        j--;
+        i++;
+    }
+    
+    printf("%d\n", resposta);
+    scanf("%d",&i);
+    return 0;
+}
